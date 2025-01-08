@@ -2,18 +2,11 @@
 
 This document must be updated daily by EACH group member.
 
-## Player 1
+## Stanley Huang
 
-### 2024-01-02 - Brief description
-Expanded description including how much time was spent on task.
-
-### 2024-01-03 - Brief description
-Expanded description including how much time was spent on task.
-
-## Player 2
-
-### 2024-01-02 - Brief description
-Expanded description including how much time was spent on task.
+### 2024-01-06 - Game works for one player and one word
+Includes time taken and asks player to retype word if typed incorrectly. (20 minutes)
 
 ### 2024-01-03 - Brief description
 Expanded description including how much time was spent on task.
+
