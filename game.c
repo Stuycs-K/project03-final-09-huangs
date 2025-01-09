@@ -46,14 +46,22 @@ int game(){
   char** words = randomWords();
   time_t  begin = time(0);
   for (int i = 0; i < 10; i++){
-    printf("%s\n", words[i]);
+    printf("Type this (%d/10): length is %ld\n%s\n", i + 1, strlen(words[i]), words[i]);
     char typed[15];
-    fgets(typed, strlen(words[i]) + 1, stdin);
+    fgets(typed, 15, stdin);
+    //printf("%s\n", typed);
+    if (typed[strlen(typed) - 1] == '\n'){
+      typed[strlen(typed) - 1] = '\0';
+    }
     //printf("typed: %s\n", typed);
+    //printf("strcmp(typed, words[i]) is %d\n", strcmp(typed, words[i]));
     while (strcmp(typed, words[i]) != 0){
-      fgets(typed, strlen(words[i]) + 1, stdin);
-      //printf("%ld and %ld\n", strlen(words[i]), strlen(typed));
       printf("You typed it wrong. Try again\n");
+      fgets(typed, 15, stdin);
+      if (typed[strlen(typed) - 1] == '\n'){
+      typed[strlen(typed) - 1] = '\0';
+      }
+      //printf("%ld and %ld\n", strlen(words[i]), strlen(typed));
     }
   }
   time_t end = time(0);
