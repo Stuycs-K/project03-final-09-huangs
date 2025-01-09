@@ -4,7 +4,7 @@
 #include <time.h>
 #include <fcntl.h>
 #include <unistd.h>
-
+#include <sys/stat.h>
 char** randomWords(){
   int file = open("/dev/urandom", O_RDONLY, 0666);
   char ** words = malloc(sizeof(char*) * 10);
@@ -17,29 +17,42 @@ char** randomWords(){
     printf("%d\n", random);
     while (current != i && ints[current] < random){
       current++;
-
     }
-    for (int j = 1; j < i; j++){
-      ints[current + j] == ints[current + j - 1];
+    for (int j = i; j > 0; j--){
+      ints[current + j] = ints[current + j - 1];
     }
     ints[current] = random;
   }
   close(file);
-  printf("\n");
-  for (int i = 0; i < 10; i++){
-    printf("%d\n", ints[i]);
+  int wordlist = open("./words.txt", O_RDONLY, 0666);
+  struct stat * stat_buffer;
+  stat_buffer = malloc(sizeof(struct stat)*1);
+  stat( "./words.txt", stat_buffer);
+  char * wordchars = malloc((int)stat_buffer->st_size);
+  read(wordlist, wordchars, (int)stat_buffer->st_size);
+  int j = 0;
+  for (int i = 0; i < 100; i++){
+    if (j < 10){
+      words[j] = strsep(&wordchars, " ");
+      if (i == ints[j]){
+        j++;
+      }
+    }
   }
+  return words;
 }
 
 int game(){
+  char** words = randomWords();
   time_t  begin = time(0);
   for (int i = 0; i < 10; i++){
-    printf("Blue\n");
-    char typed[10];
-    fgets(typed, 5, stdin);
-    while (strcmp(typed, "Blue") != 0){
-      fgets(typed, 5, stdin);
-      system("clear");
+    printf("%s\n", words[i]);
+    char typed[15];
+    fgets(typed, strlen(words[i]) + 1, stdin);
+    //printf("typed: %s\n", typed);
+    while (strcmp(typed, words[i]) != 0){
+      fgets(typed, strlen(words[i]) + 1, stdin);
+      //printf("%ld and %ld\n", strlen(words[i]), strlen(typed));
       printf("You typed it wrong. Try again\n");
     }
   }
@@ -48,6 +61,5 @@ int game(){
   return end - begin;
 }
 int main(){
-  randomWords();
-  //game();
+  game();
 }
