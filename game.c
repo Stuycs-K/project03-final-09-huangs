@@ -1,10 +1,4 @@
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <sys/stat.h>
+#include "game.h"
 char** randomWords(){
   int listsize = 1000;
   int file = open("/dev/urandom", O_RDONLY, 0666);
@@ -65,7 +59,4 @@ int game(){
   printf("Congratulations! You finished in %ld seconds\n", end - begin);
   free(words);
   return end - begin;
-}
-int main(){
-  game();
 }

@@ -9,6 +9,7 @@
 #include <sys/ipc.h>
 #include <sys/sem.h>
 #include <sys/shm.h>
+#include "game.c"
 
 int connect(int KEY){
   struct sembuf buffer;
@@ -16,11 +17,13 @@ int connect(int KEY){
   buffer.sem_flg = SEM_UNDO;
   buffer.sem_op = -1;
   int semd = semget(KEY, 1, 0644);
-  printf("Waiting for a player to quit...\n");
+  int spotsleft = semctl(semd, 0, GETVAL);
+  if (spotsleft == 0){
+    printf("Waiting for a player to quit...\n");
+  }
   semop(semd, &buffer, 1);
   char bufferr[100];
-  printf("test\n");
-  fgets(bufferr, 100, stdin);
+  game();
   return 0;
 }
 int main(){
