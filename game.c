@@ -36,23 +36,24 @@ char** randomWords(){
   free(stat_buffer);
   return words;
 }
-
+char * typed(){
+  char * typed = malloc(15);
+  while(read(0, typed, 15) == -1);
+  if (typed[strlen(typed) - 1] == '\n'){
+    typed[strlen(typed) - 1] = '\0';
+  }
+  return typed;
+}
 int game(){
   char** words = randomWords();
   time_t  begin = time(0);
   for (int i = 0; i < 10; i++){
     printf("Type this (%d/10):\n%s\n", i + 1, words[i]);
-    char typed[15];
-    fgets(typed, 15, stdin);
-    if (typed[strlen(typed) - 1] == '\n'){
-      typed[strlen(typed) - 1] = '\0';
-    }
-    while (strcmp(typed, words[i]) != 0){
+    char * input;
+    input = typed();
+    while (strcmp(input, words[i]) != 0){
       printf("You typed it wrong. Try again\n");
-      fgets(typed, 15, stdin);
-      if (typed[strlen(typed) - 1] == '\n'){
-      typed[strlen(typed) - 1] = '\0';
-      }
+      input = typed();
     }
   }
   time_t end = time(0);

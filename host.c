@@ -1,15 +1,4 @@
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/sem.h>
-#include <sys/shm.h>
-#include <signal.h>
+#include "game.h"
 
 union semun {
    int              val;    /* Value for SETVAL */
@@ -51,14 +40,11 @@ int start(int KEY){
     union semun us;
     us.val = 1;
     int r = semctl(semd, 0, SETVAL, 2);
-    char buffer[100];
-    fgets(buffer, sizeof(buffer), stdin);
+    char* buffer;
     while (1){
         usleep(500000);
+        buffer = typed();
         signal(SIGINT, sighandler);
-        if (buffer[strlen(buffer) - 1] == '\n'){
-            buffer[strlen(buffer) - 1] = '\0';
-        }
         if (strcmp(buffer, "start") == 0){
             *start = 1;
         }
