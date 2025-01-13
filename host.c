@@ -48,6 +48,12 @@ int start(int KEY){
     int* word = calloc(2, sizeof(int));
     word = shmat(playerWords, 0, 0);
 
+    int playerNames = shmget(256773432, sizeof(char*) * 2, IPC_CREAT | 0640);
+    char** names = malloc(2 * sizeof(char*));
+    names[0] = "Player 1";
+    names[1] = "Player 2";
+    names = shmat(playerNames, 0, 0);
+
     int semd = semget(KEY, 1, IPC_CREAT | 0660);
     union semun us;
     us.val = 1;
