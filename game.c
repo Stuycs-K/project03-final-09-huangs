@@ -57,18 +57,21 @@ int game(int numPlayer){
 
   char** wordList = randomWords();
   time_t  begin = time(0);
-
+  /*
   int a = fork();
   if (a == 0){
     int shmd = shmget(1867821435, sizeof(int), IPC_CREAT | 0640);
     int *start;
     start = shmat(shmd, 0, 0);
+    int i;
     while (start != 0){
-      usleep(10000000);
+      usleep(500000);
       generateString(word);
+      printf("%d", ++i);
     }
     exit(0);
   }
+  */
   for (int i = 0; i < 10; i++){
     word[numPlayer]++;
     printf("Type this (%d/10):\n%s\n", i + 1, wordList[i]);
@@ -78,6 +81,7 @@ int game(int numPlayer){
       printf("You typed it wrong. Try again\n");
       input = typed();
     }
+    generateString(word);
   }
   time_t end = time(0);
 
