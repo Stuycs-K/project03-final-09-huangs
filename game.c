@@ -45,11 +45,12 @@ char * typed(){
   return typed;
 }
 void generateString(int* word){
+  system("clear");
   printf("player 1 is on %d\n", word[0]);
   printf("player 2 is on %d\n", word[1]);
 }
 
-int game(int numPlayer){
+long game(int numPlayer){
   int KEY = 657396715;
   int shmd = shmget(KEY, sizeof(int) * 2, IPC_CREAT | 0640);
   int* word = malloc(sizeof(int) * 2);
@@ -57,21 +58,7 @@ int game(int numPlayer){
 
   char** wordList = randomWords();
   time_t  begin = time(0);
-  /*
-  int a = fork();
-  if (a == 0){
-    int shmd = shmget(1867821435, sizeof(int), IPC_CREAT | 0640);
-    int *start;
-    start = shmat(shmd, 0, 0);
-    int i;
-    while (start != 0){
-      usleep(500000);
-      generateString(word);
-      printf("%d", ++i);
-    }
-    exit(0);
-  }
-  */
+
   for (int i = 0; i < 10; i++){
     word[numPlayer]++;
     printf("Type this (%d/10):\n%s\n", i + 1, wordList[i]);
@@ -86,7 +73,7 @@ int game(int numPlayer){
   time_t end = time(0);
 
   printf("Congratulations! You finished in %ld seconds\n", end - begin);
-  free(wordList);
-  free(word);
+  //free(wordList);
+  //free(word);
   return end - begin;
 }

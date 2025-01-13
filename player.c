@@ -29,7 +29,7 @@ int connect(int KEY){
     printf("Waiting for a player to quit...\n");
   }
   int player;
-  int* time;
+  long* time;
   if (spotsleft == 1){
     int pkey = 1236432234;
     player = shmget(pkey, sizeof(int), IPC_CREAT | 0640);

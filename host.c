@@ -54,7 +54,6 @@ int start(int KEY){
     int r = semctl(semd, 0, SETVAL, 2);
     char* buffer;
     while (1){
-        usleep(500000);
         buffer = typed();
         signal(SIGINT, sighandler);
         if (strcmp(buffer, "start") == 0){
