@@ -24,6 +24,7 @@ int connect(int KEY){
   int shmd = shmget(KEY, sizeof(int), IPC_CREAT | 0640);
   data = shmat(shmd, 0, 0);
 
+  int numPlayer = -1;
   if (spotsleft == 0){
     printf("Waiting for a player to quit...\n");
   }
@@ -33,18 +34,20 @@ int connect(int KEY){
     int pkey = 1236432234;
     player = shmget(pkey, sizeof(int), IPC_CREAT | 0640);
     time = shmat(player, 0, 0);
+    numPlayer = 2;
   }
   if (spotsleft == 2){
     int pkey = 1975087341;
     player = shmget(pkey, sizeof(int), IPC_CREAT | 0640);
     time = shmat(player, 0, 0);
+    numPlayer = 1;
   }
   semop(semd, &buffer, 1);
   char bufferr[100];
   while (*data == 0){
     usleep(100000);
   }
-  *time = game();
+  *time = game(numPlayer);
   return 0;
 }
 int main(){

@@ -16,6 +16,14 @@ static void sighandler(int signo){
     if (signo == SIGINT){
         int shmd = shmget(KEY, sizeof(int), IPC_CREAT | 0640);
         shmctl(shmd, IPC_RMID, 0);
+        int p1 = shmget(k0, sizeof(int), IPC_CREAT | 0640);
+        shmctl(p1, IPC_RMID, 0);
+        int p2 = shmget(k1, sizeof(int), IPC_CREAT | 0640);
+        shmctl(p2, IPC_RMID, 0);
+        int playerWords = shmget(657396715, sizeof(int) * 2, IPC_CREAT | 0640);
+        shmctl(playerWords, IPC_RMID, 0);
+        int start = semget(1867821435, 1, IPC_CREAT | 0660);
+        semctl(start, IPC_RMID, 0);
         printf("siginted\n");
         exit(0);
     }
@@ -35,6 +43,10 @@ int start(int KEY){
     int player1 = shmget(k1, sizeof(int), IPC_CREAT | 0640);
     times[1] = shmat(player1, 0, 0);
     *times[1] = -1;
+
+    int playerWords = shmget(657396715, sizeof(int) * 2, IPC_CREAT | 0640);
+    int* word = calloc(2, sizeof(int));
+    word = shmat(playerWords, 0, 0);
 
     int semd = semget(KEY, 1, IPC_CREAT | 0660);
     union semun us;
