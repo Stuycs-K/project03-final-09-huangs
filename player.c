@@ -33,11 +33,13 @@ int connect(int KEY){
   }
   semop(semd, &buffer, 1);
   char bufferr[100];
-  while (*data == 0){
-    usleep(100000);
+  while (1){
+    while (*data == 0){
+      usleep(100);
+    }
+    game(numPlayer);
+    printf("Waiting for the other player to finish or host to start...\n");
   }
-  printf("you are player %d\n", numPlayer + 1);
-  game(numPlayer);
   return 0;
 }
 int main(){

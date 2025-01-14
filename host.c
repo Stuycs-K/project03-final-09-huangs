@@ -64,8 +64,10 @@ int start(int KEY){
     while (1){
         signal(SIGINT, sighandler);
         buffer = typed();
-        if (strcmp(buffer, "start") == 0){
+        if (strcmp(buffer, "start") == 0 && ((word[0] == 0 && word[1] == 0) || word[0] == 10 && word[1] == 10)){
             *start = 1;
+            usleep(100);
+            *start = 0;
         }
         //printf("times[0] is %d\ntimes[1] is %d\n", *times[0], *times[1]);
         if (*times[0] != -1){

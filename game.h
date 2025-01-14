@@ -15,5 +15,5 @@
 
 char** randomWords();
 char* typed();
-long game();
+long game(int numPlayer);
 #endif
