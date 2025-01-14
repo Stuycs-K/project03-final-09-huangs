@@ -68,16 +68,15 @@ long game(int numPlayer){
   word = shmat(shmd, 0, 0);
   word[0] = 0;
   word[1] = 0;
-  
+
   char** wordList = randomWords();
   time_t  begin = time(0);
   generateString(word);
-
   for (int i = 0; i < 10; i++){
-    word[numPlayer]++;
     printf("Type this (%d/10):\n%s\n", i + 1, wordList[i]);
     char * input;
     input = typed();
+    word[numPlayer]++;
     while (strcmp(input, wordList[i]) != 0){
       printf("You typed it wrong. Try again\n");
       input = typed();

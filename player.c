@@ -36,6 +36,7 @@ int connect(int KEY){
   while (*data == 0){
     usleep(100000);
   }
+  printf("you are player %d\n", numPlayer + 1);
   game(numPlayer);
   return 0;
 }
