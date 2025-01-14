@@ -6,7 +6,7 @@ player.o: player.c
 	@gcc -c player.c
 compile: game.o host.o player.o
 	@gcc -o host host.o game.o
-	@gcc -o player player.o
+	@gcc -o player player.o game.o
 run: game
 	@./game
 clean:

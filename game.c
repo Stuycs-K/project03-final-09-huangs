@@ -46,6 +46,17 @@ char * typed(){
 }
 void generateString(int* word){
   system("clear");
+  for (int i = 0; i < 2; i++){
+    printf("Player %d ", i + 1);
+    for (int j = 0; j < word[i] * 50 / 10; j++){
+      printf("_");
+    }
+    printf("car");
+    for (int j = word[i] * 50 / 10; j < 50; j++){
+      printf("_");
+    }
+    printf("\n");
+  }
   printf("player 1 is on %d\n", word[0]);
   printf("player 2 is on %d\n", word[1]);
 }
@@ -55,9 +66,12 @@ long game(int numPlayer){
   int shmd = shmget(KEY, sizeof(int) * 2, IPC_CREAT | 0640);
   int* word = malloc(sizeof(int) * 2);
   word = shmat(shmd, 0, 0);
-
+  word[0] = 0;
+  word[1] = 0;
+  
   char** wordList = randomWords();
   time_t  begin = time(0);
+  generateString(word);
 
   for (int i = 0; i < 10; i++){
     word[numPlayer]++;
@@ -74,6 +88,5 @@ long game(int numPlayer){
 
   printf("Congratulations! You finished in %ld seconds\n", end - begin);
   free(wordList);
-  free(word);
   return 1;
 }
