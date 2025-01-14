@@ -24,6 +24,8 @@ static void sighandler(int signo){
         shmctl(playerWords, IPC_RMID, 0);
         int start = semget(1867821435, 1, IPC_CREAT | 0660);
         semctl(start, IPC_RMID, 0);
+        int playerNames = shmget(256773432, sizeof(char*) * 2, IPC_CREAT | 0640);
+        shmctl(playerNames, IPC_RMID, 0);
         printf("siginted\n");
         exit(0);
     }

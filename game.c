@@ -75,5 +75,5 @@ long game(int numPlayer){
   printf("Congratulations! You finished in %ld seconds\n", end - begin);
   free(wordList);
   free(word);
-  return end - begin;
+  return 1;
 }
