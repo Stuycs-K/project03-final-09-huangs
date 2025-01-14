@@ -63,7 +63,7 @@ int start(int KEY){
     char* buffer;
     while (1){
         signal(SIGINT, sighandler);
-        buffer = typed();
+        buffer = typed(0);
         if (strcmp(buffer, "start") == 0 && ((word[0] == 0 && word[1] == 0) || word[0] == 10 && word[1] == 10)){
             *start = 1;
             usleep(100);
