@@ -36,15 +36,11 @@ char** randomWords(){
   free(stat_buffer);
   return wordList;
 }
-char * typed(int countdown){
+char * typed(){
   char * typed = malloc(15);
-  if (!countdown){
-    while(read(0, typed, 15) == -1);
-  }
-  else{
-    for (int i = 0; i < 732; i++){
-      read(0, typed, 15) == -1;
-    }
+  while(read(0, typed, 15) == -1);
+  if (typed[strlen(typed) - 1] == '\n'){
+    typed[strlen(typed) - 1] = '\0';
   }
   return typed;
 }
@@ -85,23 +81,24 @@ long game(int numPlayer){
   word[0] = 0;
   word[1] = 0;
 
-
-
   char** wordList = randomWords();
   time_t  begin = time(0);
-  char * remove;
-  for (int i = 0; i < 10; i++){
-    remove = typed(1);
-  }
+
+  int flags = fcntl(0, F_GETFL, 0);
+  fcntl(0, F_SETFL, flags | O_NONBLOCK);
+  char remove[15];
+  while(read(0, remove, 15) != -1);
+
   generateString(word);
+
   for (int i = 0; i < 10; i++){
     printf("Type this (%d/10):\n%s\n", i + 1, wordList[i]);
     char * input;
-    input = typed(0);
+    input = typed();
     word[numPlayer]++;
     while (strcmp(input, wordList[i]) != 0){
       printf("You typed it wrong. Try again\n");
-      input = typed(0);
+      input = typed();
     }
     generateString(word);
   }

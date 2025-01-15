@@ -9,8 +9,8 @@ union semun {
  };
 
 static int KEY = 1867821435;
-static int k0 = 1236432234;
-static int k1 = 1975087341;
+static int k0 = 1975087341;
+static int k1 = 1236432234;
 
 static void sighandler(int signo){
     if (signo == SIGINT){
@@ -63,7 +63,9 @@ int start(int KEY){
     char* buffer;
     while (1){
         signal(SIGINT, sighandler);
-        buffer = typed(0);
+        buffer = typed();
+        printf("%s\n", buffer);
+        printf("%d", strcmp(buffer, "start") == 0);
         if (strcmp(buffer, "start") == 0 && ((word[0] == 0 && word[1] == 0) || word[0] == 10 && word[1] == 10)){
             *start = 1;
             usleep(100);

@@ -14,7 +14,6 @@
 #include <signal.h>
 
 char** randomWords();
-char* typed(int countdown
-);
+char* typed();
 long game(int numPlayer);
 #endif
