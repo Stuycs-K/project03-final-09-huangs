@@ -17,7 +17,7 @@ int connect(int KEY){
   if (spotsleft == 0){
     printf("Waiting for a player to quit...\n");
   }
-  
+
   int player;
   long* time;
   int pkey;
@@ -37,21 +37,24 @@ int connect(int KEY){
   names = shmat(namePlayers, 0, 0);
 
   semop(semd, &buffer, 1);
-  char* bufferr;
+
   int flags = fcntl(0, F_GETFL, 0);
   fcntl(0, F_SETFL, flags | O_NONBLOCK);
+  char* bufferr;
+
   while (1){
     while (*data == 0){
       bufferr = typed();
-      printf("bufferr is %s", bufferr);
       if (strcmp(bufferr, "setusername") == 0){
         printf("Change your username to:\n");
         names[numPlayer] = typed();
         printf("Your username is now: %s.\n", names[numPlayer]);
       }
       free(bufferr);
+      if (*data == 1){
+        game(numPlayer);
+      }
     }
-    game(numPlayer);
     printf("Waiting for the other player to finish or host to start...\n");
   }
   return 0;

@@ -20,7 +20,7 @@ char** randomWords(){
   close(file);
   int wordlist = open("./words.txt", O_RDONLY, 0666);
   struct stat * stat_buffer;
-  stat_buffer = malloc(sizeof(struct stat)*1);
+  stat_buffer = malloc(sizeof(struct stat)*1);  int flags = fcntl(0, F_GETFL, 0);
   stat( "./words.txt", stat_buffer);
   char * wordchars = malloc((int)stat_buffer->st_size);
   read(wordlist, wordchars, (int)stat_buffer->st_size);
@@ -37,6 +37,8 @@ char** randomWords(){
   return wordList;
 }
 char * typed(){
+  int flags = fcntl(0, F_GETFL, 0);
+  fcntl(0, F_SETFL, flags | O_NONBLOCK);
   char * typed = malloc(15);
   while(read(0, typed, 15) == -1);
   if (typed[strlen(typed) - 1] == '\n'){
@@ -73,7 +75,7 @@ long game(int numPlayer){
   sleep(1);
   printf("1...\n");
   sleep(1);
-  fflush(stdin);
+  fflush(0);
   int KEY = 657396715;
   int shmd = shmget(KEY, sizeof(int) * 2, IPC_CREAT | 0640);
   int* word = malloc(sizeof(int) * 2);
