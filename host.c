@@ -60,16 +60,17 @@ int start(int KEY){
     union semun us;
     us.val = 1;
     int r = semctl(semd, 0, SETVAL, 2);
+    
+    int flags = fcntl(0, F_GETFL, 0);
+    fcntl(0, F_SETFL, flags | O_NONBLOCK);
     char* buffer;
+
     while (1){
         signal(SIGINT, sighandler);
         buffer = typed();
-        printf("%s\n", buffer);
-        printf("%d", strcmp(buffer, "start") == 0);
-        if (strcmp(buffer, "start") == 0 && ((word[0] == 0 && word[1] == 0) || word[0] == 10 && word[1] == 10)){
+        printf("%s\nthe strcmp is %d", buffer, strcmp(buffer, "start"));
+        if (strcmp(buffer, "start") == 0){
             *start = 1;
-            usleep(100);
-            *start = 0;
         }
         //printf("times[0] is %d\ntimes[1] is %d\n", *times[0], *times[1]);
         if (*times[0] != -1){
