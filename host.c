@@ -52,9 +52,9 @@ int start(int KEY){
 
     int playerNames = shmget(256773432, sizeof(char*) * 2, IPC_CREAT | 0640);
     char** names = malloc(2 * sizeof(char*));
+    names = shmat(playerNames, 0, 0);
     names[0] = "Player 1";
     names[1] = "Player 2";
-    names = shmat(playerNames, 0, 0);
 
     int semd = semget(KEY, 1, IPC_CREAT | 0660);
     union semun us;
@@ -76,6 +76,11 @@ int start(int KEY){
         if (*times[1] != -1){
             printf("Player 1 has finished in %d seconds\n", *times[1]);
             *times[1] = -1;
+        }
+        while(1){
+          usleep(10000);
+          printf("player 1 name: %s\n", names[0]);
+          printf("player 2 name: %s\n", names[1]);
         }
     }
 }

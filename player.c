@@ -55,7 +55,8 @@ int connect(int KEY){
         free(bufferr);
       }
     }
-    printf("%d", game(numPlayer));
+    *time = game(numPlayer);
+    printf("%d", *time);
     printf("Waiting for the other player to finish or host to start...\n");
   }
   return 0;
