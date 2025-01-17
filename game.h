@@ -12,8 +12,9 @@
 #include <sys/sem.h>
 #include <sys/shm.h>
 #include <signal.h>
+#include <termios.h>
 
 char** randomWords();
 char* typed();
-long game(int numPlayer);
+int game(int numPlayer);
 #endif

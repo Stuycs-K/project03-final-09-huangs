@@ -19,7 +19,7 @@ int connect(int KEY){
   }
 
   int player;
-  long* time;
+  int* time;
   int pkey;
   if (spotsleft == 1){
     pkey = 1236432234;
@@ -51,9 +51,11 @@ int connect(int KEY){
         printf("%d", *data);
         printf("Your username is now: %s.\n", names[numPlayer]);
       }
-      free(bufferr);
+      if (strlen(bufferr) != 0){
+        free(bufferr);
+      }
     }
-    game(numPlayer);
+    printf("%d", game(numPlayer));
     printf("Waiting for the other player to finish or host to start...\n");
   }
   return 0;

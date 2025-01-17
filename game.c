@@ -43,7 +43,10 @@ char * typed(){
 
   char * typed = malloc(15);
   while(read(0, typed, 15) == -1 && *start != 2);
-  printf("\n\n\n\n");
+  if (*start == 2){
+    free(typed);
+    return "\0";
+  }
   if (typed[strlen(typed) - 1] == '\n'){
     typed[strlen(typed) - 1] = '\0';
   }
@@ -69,19 +72,18 @@ void generateString(int* word){
   printf("player 2 is on %d\n", word[1]);
 }
 
-long game(int numPlayer){
+int game(int numPlayer){
   system("clear");
   int shmd1 = shmget(1867821435, sizeof(int), IPC_CREAT | 0640);
   int *start;
   start = shmat(shmd1, 0, 0);
-  printf("start is %d", *start);
   printf("Starting in 3...\n");
   sleep(1);
   printf("2...\n");
   sleep(1);
   printf("1...\n");
   sleep(1);
-  fflush(0);
+
   int KEY = 657396715;
   int shmd = shmget(KEY, sizeof(int) * 2, IPC_CREAT | 0640);
   int* word = malloc(sizeof(int) * 2);
@@ -91,15 +93,11 @@ long game(int numPlayer){
 
   char** wordList = randomWords();
   time_t  begin = time(0);
-
+  clock_t beginning = clock();
   int flags = fcntl(0, F_GETFL, 0);
   fcntl(0, F_SETFL, flags | O_NONBLOCK);
-  char* remove;
-  remove = typed();
-  while(strlen(remove) != 0){
-    remove = typed();
-    printf("remove\n");
-  }
+
+  tcflush(0, TCIFLUSH);
   generateString(word);
 
   *start = 1;
@@ -118,5 +116,5 @@ long game(int numPlayer){
 
   printf("Congratulations! You finished in %ld seconds\n", end - begin);
   free(wordList);
-  return end - begin;
+  return (int)(end - begin);
 }
