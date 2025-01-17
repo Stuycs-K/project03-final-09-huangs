@@ -60,15 +60,13 @@ int start(int KEY){
     union semun us;
     us.val = 1;
     int r = semctl(semd, 0, SETVAL, 2);
-
     char* buffer;
-
     while (1){
         signal(SIGINT, sighandler);
         buffer = typed();
         if (strcmp(buffer, "start") == 0){
-            *start = 1;
-            printf("game started\n");
+            *start = 2;
+            usleep(100);
         }
         if (*times[0] != -1){
             printf("Player 0 has finished in %d seconds\n", *times[0]);

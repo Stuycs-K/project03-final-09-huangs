@@ -37,12 +37,17 @@ char** randomWords(){
   return wordList;
 }
 char * typed(){
-  int flags = fcntl(0, F_GETFL, 0);
-  fcntl(0, F_SETFL, flags | O_NONBLOCK);
+  int shmd = shmget(1867821435, sizeof(int), IPC_CREAT | 0640);
+  int *start;
+  start = shmat(shmd, 0, 0);
+
   char * typed = malloc(15);
-  while(read(0, typed, 15) == -1);
+  while(read(0, typed, 15) == -1 && *start != 2);
   if (typed[strlen(typed) - 1] == '\n'){
     typed[strlen(typed) - 1] = '\0';
+  }
+  if (*start == 2){
+    *start = 1;
   }
   return typed;
 }

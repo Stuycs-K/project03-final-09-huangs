@@ -48,13 +48,12 @@ int connect(int KEY){
       if (strcmp(bufferr, "setusername") == 0){
         printf("Change your username to:\n");
         names[numPlayer] = typed();
+        printf("%d", *data);
         printf("Your username is now: %s.\n", names[numPlayer]);
       }
       free(bufferr);
-      if (*data == 1){
-        game(numPlayer);
-      }
     }
+    game(numPlayer);
     printf("Waiting for the other player to finish or host to start...\n");
   }
   return 0;
