@@ -43,11 +43,9 @@ char * typed(){
 
   char * typed = malloc(15);
   while(read(0, typed, 15) == -1 && *start != 2);
+  printf("\n\n\n\n");
   if (typed[strlen(typed) - 1] == '\n'){
     typed[strlen(typed) - 1] = '\0';
-  }
-  if (*start == 2){
-    *start = 1;
   }
   return typed;
 }
@@ -73,7 +71,10 @@ void generateString(int* word){
 
 long game(int numPlayer){
   system("clear");
-  clock_t start = clock();
+  int shmd1 = shmget(1867821435, sizeof(int), IPC_CREAT | 0640);
+  int *start;
+  start = shmat(shmd1, 0, 0);
+  printf("start is %d", *start);
   printf("Starting in 3...\n");
   sleep(1);
   printf("2...\n");
@@ -93,18 +94,22 @@ long game(int numPlayer){
 
   int flags = fcntl(0, F_GETFL, 0);
   fcntl(0, F_SETFL, flags | O_NONBLOCK);
-  char remove[15];
-  while(read(0, remove, 15) != -1);
-
+  char* remove;
+  remove = typed();
+  while(strlen(remove) != 0){
+    remove = typed();
+    printf("remove\n");
+  }
   generateString(word);
 
+  *start = 1;
   for (int i = 0; i < 10; i++){
     printf("Type this (%d/10):\n%s\n", i + 1, wordList[i]);
     char * input;
     input = typed();
     word[numPlayer]++;
     while (strcmp(input, wordList[i]) != 0){
-      printf("You typed it wrong. Try again\n");
+      printf("You typed %s wrong. Try again\n", input);
       input = typed();
     }
     generateString(word);

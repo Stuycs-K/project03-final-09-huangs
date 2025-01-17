@@ -66,6 +66,7 @@ int start(int KEY){
         buffer = typed();
         if (strcmp(buffer, "start") == 0){
             *start = 2;
+            printf("start is now 2\n");
             usleep(100);
         }
         if (*times[0] != -1){
