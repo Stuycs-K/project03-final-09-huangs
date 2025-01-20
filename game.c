@@ -41,7 +41,7 @@ char * typed(){
   int *start;
   start = shmat(shmd, 0, 0);
 
-  char * typed = malloc(15);
+  char * typed = calloc(15, sizeof(char));
   while(read(0, typed, 15) == -1 && *start != 2);
   if (*start == 2){
     free(typed);

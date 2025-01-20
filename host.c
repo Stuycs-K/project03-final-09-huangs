@@ -50,11 +50,17 @@ int start(int KEY){
     int* word = calloc(2, sizeof(int));
     word = shmat(playerWords, 0, 0);
 
-    int playerNames = shmget(256773432, sizeof(char*) * 2, IPC_CREAT | 0640);
-    char** names = malloc(2 * sizeof(char*));
-    names = shmat(playerNames, 0, 0);
-    names[0] = "Player 1";
-    names[1] = "Player 2";
+    int playerNames = shmget(256773432, sizeof(char) * 30, IPC_CREAT | 0666);
+    char* name = shmat(playerNames, 0, 0);
+
+    char* first = "Player 1";
+    char* second = "Player 2";
+    for (int i = 0; i < strlen(first); i++){
+        name[i] = first[i];
+    }
+    for (int i = 0; i < strlen(second); i++){
+        name[i + 15] = second[i];
+    }
 
     int semd = semget(KEY, 1, IPC_CREAT | 0660);
     union semun us;
@@ -63,11 +69,11 @@ int start(int KEY){
     char* buffer;
     while (1){
         signal(SIGINT, sighandler);
+        /*
         buffer = typed();
         if (strcmp(buffer, "start") == 0){
             *start = 2;
             printf("start is now 2\n");
-            usleep(100);
         }
         if (*times[0] != -1){
             printf("Player 0 has finished in %d seconds\n", *times[0]);
@@ -77,11 +83,10 @@ int start(int KEY){
             printf("Player 1 has finished in %d seconds\n", *times[1]);
             *times[1] = -1;
         }
-        while(1){
-          usleep(10000);
-          printf("player 1 name: %s\n", names[0]);
-          printf("player 2 name: %s\n", names[1]);
-        }
+        */
+        printf("player 1 name: %s\n", name);
+        printf("player 2 name: %s\n", &name[15]);
+        sleep(1);
     }
 }
 

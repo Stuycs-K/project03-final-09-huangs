@@ -1,5 +1,39 @@
 #include "game.h"
 
+void setUsername(int numPlayer, char* name){
+  if (numPlayer == 0){
+    printf("Your current username is %s. Change your username to:\n", name);
+  }
+  else{
+    printf("Your current username is %s. Change your username to:\n", &name[15]);    
+  }
+  char* newName = typed();
+  int smaller = strlen(newName);
+  if (15 < smaller){
+    smaller = 15;
+  }
+  printf("smaller is %d\n", smaller);
+  printf("numPlayer is %d\n", numPlayer);
+  if (numPlayer == 0){
+    for (int i = 0; i < smaller; i++){
+      name[i] = newName[i];
+      printf("newName[i] = %c\n", newName[i]);
+    }
+    for (int i = smaller; i < 15; i++){
+      name[i] = '\0';
+    }
+  }
+  else{
+    for (int i = 0; i < smaller; i++){
+      name[i + 15] = newName[i];
+    }
+    for (int i = smaller; i < 30; i++){
+      name[i + 15] = '\0';
+    }
+  }
+  printf("new name is %s\n", newName);
+  printf("name is now %s\n", name);
+}
 int connect(int KEY){
   //Semaphore stuff
   struct sembuf buffer;
@@ -32,9 +66,8 @@ int connect(int KEY){
   player = shmget(pkey, sizeof(long), IPC_CREAT | 0640);
   time = shmat(player, 0, 0);
 
-  int namePlayers = shmget(256773432, sizeof(char *) * 2, IPC_CREAT | 0640);
-  char** names;
-  names = shmat(namePlayers, 0, 0);
+  int playerNames = shmget(256773432, sizeof(char) * 30, IPC_CREAT | 0666);
+  char* name = shmat(playerNames, 0, 0);
 
   semop(semd, &buffer, 1);
 
@@ -46,10 +79,7 @@ int connect(int KEY){
     while (*data == 0){
       bufferr = typed();
       if (strcmp(bufferr, "setusername") == 0){
-        printf("Change your username to:\n");
-        names[numPlayer] = typed();
-        printf("%d", *data);
-        printf("Your username is now: %s.\n", names[numPlayer]);
+        setUsername(numPlayer, name);
       }
       if (strlen(bufferr) != 0){
         free(bufferr);
