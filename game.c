@@ -107,7 +107,7 @@ int game(int numPlayer){
     input = typed();
     word[numPlayer]++;
     while (strcmp(input, wordList[i]) != 0){
-      printf("You typed %s wrong. Try again\n", input);
+      printf("You typed %s wrong. Try again\n", wordList[i]);
       input = typed();
     }
     generateString(word);

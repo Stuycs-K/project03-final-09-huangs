@@ -37,18 +37,18 @@ int start(int KEY){
     start = shmat(shmd, 0, 0);
     *start = 0;
 
-    int* times[2];
     int player0 = shmget(k0, sizeof(int), IPC_CREAT | 0640);
-    times[0] = shmat(player0, 0, 0);
-    *times[0] = -1;
+    int *time1;
+    time1 = shmat(player0, 0, 0);
+    *time1 = -1;
 
     int player1 = shmget(k1, sizeof(int), IPC_CREAT | 0640);
-    times[1] = shmat(player1, 0, 0);
-    *times[1] = -1;
+    int* time2;
+    time2 = shmat(player1, 0, 0);
+    *time2 = -1;
 
     int playerWords = shmget(657396715, sizeof(int) * 2, IPC_CREAT | 0640);
-    int* word = calloc(2, sizeof(int));
-    word = shmat(playerWords, 0, 0);
+    int* word = shmat(playerWords, 0, 0);
 
     int playerNames = shmget(256773432, sizeof(char) * 30, IPC_CREAT | 0666);
     char* name = shmat(playerNames, 0, 0);
@@ -67,26 +67,30 @@ int start(int KEY){
     us.val = 1;
     int r = semctl(semd, 0, SETVAL, 2);
     char* buffer;
+
+    int flags = fcntl(0, F_GETFL, 0);
+    fcntl(0, F_SETFL, flags | O_NONBLOCK);
+
     while (1){
         signal(SIGINT, sighandler);
-        /*
         buffer = typed();
         if (strcmp(buffer, "start") == 0){
             *start = 2;
-            printf("start is now 2\n");
         }
-        if (*times[0] != -1){
-            printf("Player 0 has finished in %d seconds\n", *times[0]);
-            *times[0] = -1;
+        while (*time1 == -1 || *time2 == -1){
+            if (*time1 != -1 && *time1 != 0){
+                printf("0 made it\n");
+                printf("%s has finished in %d seconds\n", name, *time1);
+                *time1 = 0;
+            }
+            if (*time2 != -1 && *time2 != 0){
+                printf("1 made it\n");
+                printf("%s has finished in %d seconds\n", &name[15], *time2);
+                *time2 = 0;
+            }
         }
-        if (*times[1] != -1){
-            printf("Player 1 has finished in %d seconds\n", *times[1]);
-            *times[1] = -1;
-        }
-        */
-        printf("player 1 name: %s\n", name);
-        printf("player 2 name: %s\n", &name[15]);
-        sleep(1);
+        *time1 = -1;
+        *time2 = -1;
     }
 }
 

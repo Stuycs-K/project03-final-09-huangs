@@ -12,12 +12,9 @@ void setUsername(int numPlayer, char* name){
   if (15 < smaller){
     smaller = 15;
   }
-  printf("smaller is %d\n", smaller);
-  printf("numPlayer is %d\n", numPlayer);
   if (numPlayer == 0){
     for (int i = 0; i < smaller; i++){
       name[i] = newName[i];
-      printf("newName[i] = %c\n", newName[i]);
     }
     for (int i = smaller; i < 15; i++){
       name[i] = '\0';
@@ -31,8 +28,12 @@ void setUsername(int numPlayer, char* name){
       name[i + 15] = '\0';
     }
   }
-  printf("new name is %s\n", newName);
-  printf("name is now %s\n", name);
+  if (numPlayer == 0){
+    printf("Your username is now %s.\n", name);
+  }
+  else{
+    printf("Your username is now %s.\n", &name[15]);    
+  }
 }
 int connect(int KEY){
   //Semaphore stuff
@@ -51,7 +52,7 @@ int connect(int KEY){
   if (spotsleft == 0){
     printf("Waiting for a player to quit...\n");
   }
-
+  printf("You are now playing Budget Typeracer.\n");
   int player;
   int* time;
   int pkey;
@@ -63,9 +64,9 @@ int connect(int KEY){
     pkey = 1975087341;
     numPlayer = 0;
   }
-  player = shmget(pkey, sizeof(long), IPC_CREAT | 0640);
+  player = shmget(pkey, sizeof(int), IPC_CREAT | 0640);
   time = shmat(player, 0, 0);
-
+  *time = 100;
   int playerNames = shmget(256773432, sizeof(char) * 30, IPC_CREAT | 0666);
   char* name = shmat(playerNames, 0, 0);
 
@@ -86,7 +87,7 @@ int connect(int KEY){
       }
     }
     *time = game(numPlayer);
-    printf("%d", *time);
+    printf("*time is %d\n", *time);
     printf("Waiting for the other player to finish or host to start...\n");
   }
   return 0;
