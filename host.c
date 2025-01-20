@@ -31,38 +31,38 @@ static void sighandler(int signo){
     }
 }
 void checkScore(){
-    int leaderboard = open("./leaderboard.txt", O_RDONLY | O_CREAT, 0666);
+    int score = open("./score.txt", O_RDONLY | O_CREAT, 0666);
     char* buffer = calloc(50, sizeof(char));
-    read(leaderboard, buffer, 50);
+    read(score, buffer, 50);
     if (strlen(buffer) == 0){
-        printf("Leaderboard is empty.\n");
+        printf("Score is currently empty.\n");
     }
     else{
         char* numbers = strstr(buffer, "verylongseparator") + 18;
-        char* currentnumber;
-        char* currentname;
-        printf("The current head to head score between %s and %s is %s to %s.\n", strsep(&buffer, "\n"), strsep(&buffer, "\n"), strsep(&numbers, "\n"), strsep(&numbers, "\n"));
+        char* currentnumber = strsep(&numbers, "\n");
+        char* currentname = strsep(&buffer, "\n");
+        printf("The current head to head score between %s and %s is %s to %s.\n", currentname, strsep(&buffer, "\n"), currentnumber, numbers);
     }
-    close(leaderboard);
+    close(score);
 }
 void updateScore(char* p1, char* p2, int t1, int t2){
-    int leaderboard = open("./leaderboard.txt", O_RDWR | O_CREAT, 0666);
+    int score = open("./score.txt", O_RDWR | O_CREAT, 0666);
     char* buffer = calloc(50, sizeof(char));
-    int r = read(leaderboard, buffer, 50);
+    int r = read(score, buffer, 50);
     char* newbuffer = calloc(50, sizeof(char));
-    close(leaderboard);
-    leaderboard = open("./leaderboard.txt", O_TRUNC | O_RDWR | O_CREAT, 0666);
+    close(score);
+    score = open("./score.txt", O_TRUNC | O_RDWR | O_CREAT, 0666);
     if (strlen(buffer) == 0){
         int first = 0;
-            int second = 0;
-            if (t1 >= t2){
-                first++;
-            }
-            if (t1 <= t2){
-                second++;
-            }
-            sprintf(newbuffer, "%s\n%s\nverylongseparator\n%d\n%d", p1, p2, first, second);
-            write(leaderboard, newbuffer, 50);
+        int second = 0;
+        if (t1 < t2){
+            first++;
+        }
+        if (t1 > t2){
+            second++;
+        }
+        sprintf(newbuffer, "%s\n%s\nverylongseparator\n%d\n%d", p1, p2, first, second);
+        write(score, newbuffer, 50);
     }
     else{
         char* numbers = strstr(buffer, "verylongseparator") + 18;
@@ -73,29 +73,29 @@ void updateScore(char* p1, char* p2, int t1, int t2){
             char* firstscore = strsep(&numbers, "\n");
             int first = atoi(firstscore);
             int second = atoi(strsep(&numbers, "\n"));
-            if (t1 >= t2){
+            if (t1 < t2){
                 first++;
             }
-            if (t1 <= t2){
+            if (t1 > t2){
                 second++;
             }
             sprintf(newbuffer, "%s\n%s\nverylongseparator\n%d\n%d", p1, p2, first, second);
-            write(leaderboard, newbuffer, 50);
+            write(score, newbuffer, 50);
         }
         else{
             int first = 0;
             int second = 0;
-            if (t1 >= t2){
+            if (t1 < t2){
                 first++;
             }
-            if (t1 <= t2){
+            if (t1 > t2){
                 second++;
             }
             sprintf(newbuffer, "%s\n%s\nverylongseparator\n%d\n%d", p1, p2, first, second);
-            write(leaderboard, newbuffer, 50);
+            write(score, newbuffer, 50);
         }
     }
-    close(leaderboard);
+    close(score);
 }
 int start(int KEY){
     int shmd = shmget(KEY, sizeof(int), IPC_CREAT | 0640);
@@ -137,7 +137,7 @@ int start(int KEY){
     int flags = fcntl(0, F_GETFL, 0);
     fcntl(0, F_SETFL, flags | O_NONBLOCK);
 
-    int leaderboard = open("./leaderboard.txt", O_RDWR | O_CREAT, 0666);
+    int score = open("./score.txt", O_RDWR | O_CREAT, 0666);
 
     while (1){
         signal(SIGINT, sighandler);
@@ -151,9 +151,10 @@ int start(int KEY){
             checkScore();
             fflush(stdout);
         }
-        if (strcmp(buffer, "update") == 0){
-            updateScore("joe", "bob", 5, 6);
-            printf("buffer is update\n");
+        if (strcmp(buffer, "reset") == 0){
+            remove("score.txt");
+            int score = open("./score.txt", O_RDWR | O_CREAT, 0666);
+            printf("The score has been reset.\n");
             fflush(stdout);
         }
         if (*start == 2){
@@ -161,16 +162,15 @@ int start(int KEY){
             int finished2 = 1;
             while (*time1 == -1 || *time2 == -1){
                 if (*time1 != -1 && finished1){
-                    printf("0 made it\n");
                     printf("%s has finished in %d seconds\n", name, *time1);
                     finished1 = 0;
                 }
                 if (*time2 != -1 && finished2){
-                    printf("1 made it\n");
                     printf("%s has finished in %d seconds\n", &name[15], *time2);
                     finished2 = 0;
                 }
             }
+            updateScore(name, &name[15], *time1, *time2);
             *time1 = -1;
             *time2 = -1;
         }

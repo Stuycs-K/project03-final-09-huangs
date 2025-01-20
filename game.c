@@ -53,6 +53,8 @@ char * typed(){
   return typed;
 }
 void generateString(int* word){
+  int playerNames = shmget(256773432, sizeof(char) * 30, IPC_CREAT | 0666);
+  char* name = shmat(playerNames, 0, 0);
   system("clear");
   for (int i = 0; i < 2; i++){
     for (int j = 0; j < word[i] * 50 / 10; j++){
@@ -62,14 +64,12 @@ void generateString(int* word){
     for (int j = word[i] * 50 / 10; j < 50; j++){
       printf("_");
     }
-    printf("    Player %d ", i + 1);
+    printf("    %s", &name[i * 15]);
     if (word[i] == 10){
       printf("  Finished");
     }
     printf("\n");
   }
-  printf("player 1 is on %d\n", word[0]);
-  printf("player 2 is on %d\n", word[1]);
 }
 
 int game(int numPlayer){
