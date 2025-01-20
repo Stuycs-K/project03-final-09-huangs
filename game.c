@@ -20,7 +20,7 @@ char** randomWords(){
   close(file);
   int wordlist = open("./words.txt", O_RDONLY, 0666);
   struct stat * stat_buffer;
-  stat_buffer = malloc(sizeof(struct stat)*1);  int flags = fcntl(0, F_GETFL, 0);
+  stat_buffer = malloc(sizeof(struct stat)*1);
   stat( "./words.txt", stat_buffer);
   char * wordchars = malloc((int)stat_buffer->st_size);
   read(wordlist, wordchars, (int)stat_buffer->st_size);
@@ -28,6 +28,9 @@ char** randomWords(){
   for (int i = 0; i < listsize; i++){
     if (j < 10){
       wordList[j] = strsep(&wordchars, " ");
+      if (wordList[j] == NULL){
+        wordList[j] = wordList[j - 1];
+      }
       if (i == ints[j]){
         j++;
       }

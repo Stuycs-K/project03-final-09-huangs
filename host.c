@@ -98,24 +98,37 @@ void updateScore(char* p1, char* p2, int t1, int t2){
     }
     close(score);
 }
-void playerQuit(){
-    int player0 = shmget(k0, sizeof(int), IPC_CREAT | 0640);
-    int *time1;
-    time1 = shmat(player0, 0, 0);
-
-    int player1 = shmget(k1, sizeof(int), IPC_CREAT | 0640);
-    int* time2;
-    time2 = shmat(player1, 0, 0);
-
-    int playerNames = shmget(256773432, sizeof(char) * 30, IPC_CREAT | 0666);
-    char* name = shmat(playerNames, 0, 0);
-
+void playerQuit(int* time1, int* time2, char* name){
     if (*time1 == -1000){
         printf("%s has quit.\n", name);
+        fflush(stdout);
+        *time1 = -10000;
     }
     if (*time2 == -1000){
         printf("%s has quit.\n", &name[15]);
+        fflush(stdout);
+        *time2 = -10000;
     }
+}
+char * hostTyped(){
+    char * typed = calloc(15, sizeof(char));
+    
+    int player0 = shmget(k0, sizeof(int), IPC_CREAT | 0640);
+    int *time1;
+    time1 = shmat(player0, 0, 0);
+    int player1 = shmget(k1, sizeof(int), IPC_CREAT | 0640);
+    int* time2;
+    time2 = shmat(player1, 0, 0);
+    
+    int playerNames = shmget(256773432, sizeof(char) * 30, IPC_CREAT | 0666);
+    char* name = shmat(playerNames, 0, 0);
+    while(read(0, typed, 15) == -1){
+        playerQuit(time1, time2, name);
+    }
+    if (typed[strlen(typed) - 1] == '\n'){
+    typed[strlen(typed) - 1] = '\0';
+    }
+    return typed;
 }
 int start(int KEY){
     int shmd = shmget(KEY, sizeof(int), IPC_CREAT | 0640);
@@ -164,7 +177,9 @@ int start(int KEY){
     printf("Type \"reset\" to reset the score.\n");
     while (1){
         signal(SIGINT, sighandler);
-        buffer = typed();
+        buffer = hostTyped();
+        printf("o");
+        fflush(stdout);
         if (strcmp(buffer, "start") == 0){
             if (semctl(semd, 0, GETVAL) != 0){
                 printf("You need two players to start\n");
@@ -185,7 +200,6 @@ int start(int KEY){
             printf("The score has been reset.\n");
             fflush(stdout);
         }
-        //playerQuit();
         if (*start == 2){
             int finished1 = 1;
             int finished2 = 1;

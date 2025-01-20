@@ -16,6 +16,7 @@ static void sighandler(int signo){
           *time = -1000;
         }
         printf("siginted\n");
+        exit(0);
     }
 }
 void setUsername(int numPlayer, char* name){
@@ -44,19 +45,19 @@ void setUsername(int numPlayer, char* name){
   printf("Your username is now %s.\n", &name[numPlayer * 15]);
 }
 void checkScore(){
-    int score = open("./score.txt", O_RDONLY | O_CREAT, 0666);
-    char* buffer = calloc(50, sizeof(char));
-    read(score, buffer, 50);
-    if (strlen(buffer) == 0){
-        printf("Score is currently empty.\n");
-    }
-    else{
-        char* numbers = strstr(buffer, "verylongseparator") + 18;
-        char* currentnumber = strsep(&numbers, "\n");
-        char* currentname = strsep(&buffer, "\n");
-        printf("The current head to head score between %s and %s is %s to %s.\n", currentname, strsep(&buffer, "\n"), currentnumber, numbers);
-    }
-    close(score);
+  int score = open("./score.txt", O_RDONLY | O_CREAT, 0666);
+  char* buffer = calloc(50, sizeof(char));
+  read(score, buffer, 50);
+  if (strlen(buffer) == 0){
+      printf("Score is currently empty.\n");
+  }
+  else{
+      char* numbers = strstr(buffer, "verylongseparator") + 18;
+      char* currentnumber = strsep(&numbers, "\n");
+      char* currentname = strsep(&buffer, "\n");
+      printf("The current head to head score between %s and %s is %s to %s.\n", currentname, strsep(&buffer, "\n"), currentnumber, numbers);
+  }
+  close(score);
 }
 int connect(int KEY){
   //Semaphore stuff
@@ -119,6 +120,7 @@ int connect(int KEY){
   printf("Type \"setusername\" to change your username.\n");
   printf("Type \"score\" to check the score.\n");
   while (1){
+    signal(SIGINT, sighandler);
     while (*data == 0){
       bufferr = typed();
       if (strcmp(bufferr, "setusername") == 0){
