@@ -32,8 +32,8 @@ static void sighandler(int signo){
 }
 void checkScore(){
     int leaderboard = open("./leaderboard.txt", O_RDONLY | O_CREAT, 0666);
-    char* buffer = calloc(1000, sizeof(char));
-    read(leaderboard, buffer, 1000);
+    char* buffer = calloc(50, sizeof(char));
+    read(leaderboard, buffer, 50);
     if (strlen(buffer) == 0){
         printf("Leaderboard is empty.\n");
     }
@@ -41,7 +41,47 @@ void checkScore(){
         char* numbers = strstr(buffer, "verylongseparator") + 18;
         char* currentnumber;
         char* currentname;
-        printf("The current head to head score between %s and %s is %s to %s.\n", currentname = strsep(&buffer, "\n"), currentname = strsep(&buffer, "\n"), currentnumber = strsep(&numbers, "\n"), currentnumber = strsep(&numbers, "\n"));
+        printf("The current head to head score between %s and %s is %s to %s.\n", strsep(&buffer, "\n"), strsep(&buffer, "\n"), strsep(&numbers, "\n"), strsep(&numbers, "\n"));
+    }
+}
+void updateScore(char* p1, char* p2, int t1, int t2){
+    int leaderboard = open("./leaderboard.txt", O_TRUNC | O_RDWR | O_CREAT, 0666);
+    char* buffer = calloc(50, sizeof(char));
+    read(leaderboard, buffer, 50);
+    char* newbuffer = calloc(50, sizeof(char));
+    if (strlen(buffer) == 0){
+        sprintf(newbuffer, "%s\n%s\nverylongseparator\n%d\n%d", p1, p2, t1, t2);
+        write(leaderboard, newbuffer, 50);
+    }
+    else{
+        char* numbers = strstr(buffer, "verylongseparator") + 18;
+        char* currentnumber;
+        char* currentname;
+        if (strcmp(strsep(&buffer, "\n"), p1) == 0 && strcmp(strsep(&buffer, "\n"), p2) == 0){
+            char* firstscore = strsep(&numbers, "\n");
+            int first = atoi(firstscore);
+            int second = atoi(strsep(&numbers, "\n"));
+            if (t1 >= t2){
+                first++;
+            }
+            if (t1 <= t2){
+                second++;
+            }
+            sprintf(newbuffer, "%s\n%s\nverylongseparator\n%d\n%d", p1, p2, first, second);
+            write(leaderboard, newbuffer, 50);
+        }
+        else{
+            int first = 0;
+            int second = 0;
+            if (t1 >= t2){
+                first++;
+            }
+            if (t1 <= t2){
+                second++;
+            }
+            sprintf(newbuffer, "%s\n%s\nverylongseparator\n%d\n%d", p1, p2, first, second);
+            write(leaderboard, newbuffer, 50);
+        }
     }
 }
 int start(int KEY){
@@ -98,22 +138,29 @@ int start(int KEY){
             checkScore();
             fflush(stdout);
         }
-        int finished1 = 1;
-        int finished2 = 1;
-        while (*time1 == -1 || *time2 == -1){
-            if (*time1 != -1 && finished1){
-                printf("0 made it\n");
-                printf("%s has finished in %d seconds\n", name, *time1);
-                finished1 = 0;
-            }
-            if (*time2 != -1 && finished2){
-                printf("1 made it\n");
-                printf("%s has finished in %d seconds\n", &name[15], *time2);
-                finished2 = 0;
-            }
+        if (strcmp(buffer, "update") == 0){
+            updateScore("joe", "bob", 5, 6);
+            printf("buffer is update\n");
+            fflush(stdout);
         }
-        *time1 = -1;
-        *time2 = -1;
+        if (*start == 2){
+            int finished1 = 1;
+            int finished2 = 1;
+            while (*time1 == -1 || *time2 == -1){
+                if (*time1 != -1 && finished1){
+                    printf("0 made it\n");
+                    printf("%s has finished in %d seconds\n", name, *time1);
+                    finished1 = 0;
+                }
+                if (*time2 != -1 && finished2){
+                    printf("1 made it\n");
+                    printf("%s has finished in %d seconds\n", &name[15], *time2);
+                    finished2 = 0;
+                }
+            }
+            *time1 = -1;
+            *time2 = -1;
+        }
     }
 }
 
