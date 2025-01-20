@@ -1,12 +1,25 @@
 #include "game.h"
 
+int pkey;
+static void sighandler(int signo){
+  int player;
+  int* time;
+    if (signo == SIGINT){
+        if (pkey == 1236432234){
+          player = shmget(pkey, sizeof(int), IPC_CREAT | 0640);
+          time = shmat(player, 0, 0);
+          *time = -1000;
+        }
+        else{
+          player = shmget(1975087341, sizeof(int), IPC_CREAT | 0640);
+          time = shmat(player, 0, 0);
+          *time = -1000;
+        }
+        printf("siginted\n");
+    }
+}
 void setUsername(int numPlayer, char* name){
-  if (numPlayer == 0){
-    printf("Your current username is %s. Change your username to:\n", name);
-  }
-  else{
-    printf("Your current username is %s. Change your username to:\n", &name[15]);    
-  }
+  printf("Your current username is %s. Change your username to:\n", &name[numPlayer * 15]);
   char* newName = typed();
   int smaller = strlen(newName);
   if (15 < smaller){
@@ -28,12 +41,22 @@ void setUsername(int numPlayer, char* name){
       name[i + 15] = '\0';
     }
   }
-  if (numPlayer == 0){
-    printf("Your username is now %s.\n", name);
-  }
-  else{
-    printf("Your username is now %s.\n", &name[15]);    
-  }
+  printf("Your username is now %s.\n", &name[numPlayer * 15]);
+}
+void checkScore(){
+    int score = open("./score.txt", O_RDONLY | O_CREAT, 0666);
+    char* buffer = calloc(50, sizeof(char));
+    read(score, buffer, 50);
+    if (strlen(buffer) == 0){
+        printf("Score is currently empty.\n");
+    }
+    else{
+        char* numbers = strstr(buffer, "verylongseparator") + 18;
+        char* currentnumber = strsep(&numbers, "\n");
+        char* currentname = strsep(&buffer, "\n");
+        printf("The current head to head score between %s and %s is %s to %s.\n", currentname, strsep(&buffer, "\n"), currentnumber, numbers);
+    }
+    close(score);
 }
 int connect(int KEY){
   //Semaphore stuff
@@ -52,10 +75,10 @@ int connect(int KEY){
   if (spotsleft == 0){
     printf("Waiting for a player to quit...\n");
   }
+  system("clear");
   printf("You are now playing Budget Typeracer.\n");
   int player;
   int* time;
-  int pkey;
   if (spotsleft == 1){
     pkey = 1236432234;
     numPlayer = 1;
@@ -66,21 +89,43 @@ int connect(int KEY){
   }
   player = shmget(pkey, sizeof(int), IPC_CREAT | 0640);
   time = shmat(player, 0, 0);
-  *time = 100;
+  *time = -1;
   int playerNames = shmget(256773432, sizeof(char) * 30, IPC_CREAT | 0666);
   char* name = shmat(playerNames, 0, 0);
-
+  char newName[100];
+  sprintf(newName, "Player %d", numPlayer + 1);
+  if (numPlayer == 0){
+    for (int i = 0; i < strlen(newName); i++){
+      name[i] = newName[i];
+    }
+    for (int i = strlen(newName); i < 15; i++){
+      name[i] = '\0';
+    }
+  }
+  else{
+    for (int i = 0; i < strlen(newName); i++){
+      name[i + 15] = newName[i];
+    }
+    for (int i = strlen(newName); i < 30; i++){
+      name[i + 15] = '\0';
+    }
+  }
   semop(semd, &buffer, 1);
 
   int flags = fcntl(0, F_GETFL, 0);
   fcntl(0, F_SETFL, flags | O_NONBLOCK);
   char* bufferr;
 
+  printf("Type \"setusername\" to change your username.\n");
+  printf("Type \"score\" to check the score.\n");
   while (1){
     while (*data == 0){
       bufferr = typed();
       if (strcmp(bufferr, "setusername") == 0){
         setUsername(numPlayer, name);
+      }
+      if (strcmp(bufferr, "score") == 0){
+        checkScore();
       }
       if (strlen(bufferr) != 0){
         free(bufferr);

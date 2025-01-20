@@ -26,6 +26,7 @@ static void sighandler(int signo){
         semctl(start, IPC_RMID, 0);
         int playerNames = shmget(256773432, sizeof(char*) * 2, IPC_CREAT | 0640);
         shmctl(playerNames, IPC_RMID, 0);
+        remove("./score.txt");
         printf("siginted\n");
         exit(0);
     }
@@ -97,6 +98,25 @@ void updateScore(char* p1, char* p2, int t1, int t2){
     }
     close(score);
 }
+void playerQuit(){
+    int player0 = shmget(k0, sizeof(int), IPC_CREAT | 0640);
+    int *time1;
+    time1 = shmat(player0, 0, 0);
+
+    int player1 = shmget(k1, sizeof(int), IPC_CREAT | 0640);
+    int* time2;
+    time2 = shmat(player1, 0, 0);
+
+    int playerNames = shmget(256773432, sizeof(char) * 30, IPC_CREAT | 0666);
+    char* name = shmat(playerNames, 0, 0);
+
+    if (*time1 == -1000){
+        printf("%s has quit.\n", name);
+    }
+    if (*time2 == -1000){
+        printf("%s has quit.\n", &name[15]);
+    }
+}
 int start(int KEY){
     int shmd = shmget(KEY, sizeof(int), IPC_CREAT | 0640);
     int *start;
@@ -138,13 +158,21 @@ int start(int KEY){
     fcntl(0, F_SETFL, flags | O_NONBLOCK);
 
     int score = open("./score.txt", O_RDWR | O_CREAT, 0666);
-
+    printf("You have started a game of Budget Typeracer.\n");
+    printf("Type \"start\" to start the game.\n");
+    printf("Type \"score\" to check the score.\n");
+    printf("Type \"reset\" to reset the score.\n");
     while (1){
         signal(SIGINT, sighandler);
         buffer = typed();
         if (strcmp(buffer, "start") == 0){
-            *start = 2;
-            printf("Game has been started.\n");
+            if (semctl(semd, 0, GETVAL) != 0){
+                printf("You need two players to start\n");
+            }
+            else{
+                *start = 2;
+                printf("Game has been started.\n");
+            }
             fflush(stdout);
         }
         if (strcmp(buffer, "score") == 0){
@@ -157,18 +185,20 @@ int start(int KEY){
             printf("The score has been reset.\n");
             fflush(stdout);
         }
+        //playerQuit();
         if (*start == 2){
             int finished1 = 1;
             int finished2 = 1;
             while (*time1 == -1 || *time2 == -1){
-                if (*time1 != -1 && finished1){
+                if (*time1 > 0  && finished1){
                     printf("%s has finished in %d seconds\n", name, *time1);
                     finished1 = 0;
                 }
-                if (*time2 != -1 && finished2){
+                if (*time2 > 0 && finished2){
                     printf("%s has finished in %d seconds\n", &name[15], *time2);
                     finished2 = 0;
                 }
+                //playerQuit();
             }
             updateScore(name, &name[15], *time1, *time2);
             *time1 = -1;
