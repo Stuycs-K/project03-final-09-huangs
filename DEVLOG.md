@@ -27,3 +27,9 @@ Made several local commits that had working not reading input during the countdo
 
 ### 2025-01-16 - Reverted damages from yesterday's rm
 Game now starts normally for players instead of having them newline first. (1 hour)
+
+### 2025-01-17 - Working ignore input during countdown
+Anything you type during the countdown will be ignored for the first word (2 hours)
+
+### 2025-01-19 - Working score and setusername and added various print statements and started on sigint for players
+Host and players can check the score. Score is automatically updated after each game. Players can set their usernames and it will be reflected in the score and in the game string. Host knows when a player sigints. The mechanics of the game are practically done. (7 hours)
