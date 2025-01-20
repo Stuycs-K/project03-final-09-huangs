@@ -43,21 +43,33 @@ void checkScore(){
         char* currentname;
         printf("The current head to head score between %s and %s is %s to %s.\n", strsep(&buffer, "\n"), strsep(&buffer, "\n"), strsep(&numbers, "\n"), strsep(&numbers, "\n"));
     }
+    close(leaderboard);
 }
 void updateScore(char* p1, char* p2, int t1, int t2){
-    int leaderboard = open("./leaderboard.txt", O_TRUNC | O_RDWR | O_CREAT, 0666);
+    int leaderboard = open("./leaderboard.txt", O_RDWR | O_CREAT, 0666);
     char* buffer = calloc(50, sizeof(char));
-    read(leaderboard, buffer, 50);
+    int r = read(leaderboard, buffer, 50);
     char* newbuffer = calloc(50, sizeof(char));
+    close(leaderboard);
+    leaderboard = open("./leaderboard.txt", O_TRUNC | O_RDWR | O_CREAT, 0666);
     if (strlen(buffer) == 0){
-        sprintf(newbuffer, "%s\n%s\nverylongseparator\n%d\n%d", p1, p2, t1, t2);
-        write(leaderboard, newbuffer, 50);
+        int first = 0;
+            int second = 0;
+            if (t1 >= t2){
+                first++;
+            }
+            if (t1 <= t2){
+                second++;
+            }
+            sprintf(newbuffer, "%s\n%s\nverylongseparator\n%d\n%d", p1, p2, first, second);
+            write(leaderboard, newbuffer, 50);
     }
     else{
         char* numbers = strstr(buffer, "verylongseparator") + 18;
         char* currentnumber;
-        char* currentname;
-        if (strcmp(strsep(&buffer, "\n"), p1) == 0 && strcmp(strsep(&buffer, "\n"), p2) == 0){
+        char* currentname = strsep(&buffer, "\n");
+        char* nextname = strsep(&buffer, "\n");
+        if (strcmp(currentname, p1) == 0 && strcmp(nextname, p2) == 0){
             char* firstscore = strsep(&numbers, "\n");
             int first = atoi(firstscore);
             int second = atoi(strsep(&numbers, "\n"));
@@ -83,6 +95,7 @@ void updateScore(char* p1, char* p2, int t1, int t2){
             write(leaderboard, newbuffer, 50);
         }
     }
+    close(leaderboard);
 }
 int start(int KEY){
     int shmd = shmget(KEY, sizeof(int), IPC_CREAT | 0640);
