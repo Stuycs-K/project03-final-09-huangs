@@ -30,7 +30,20 @@ static void sighandler(int signo){
         exit(0);
     }
 }
-
+void checkScore(){
+    int leaderboard = open("./leaderboard.txt", O_RDONLY | O_CREAT, 0666);
+    char* buffer = calloc(1000, sizeof(char));
+    read(leaderboard, buffer, 1000);
+    if (strlen(buffer) == 0){
+        printf("Leaderboard is empty.\n");
+    }
+    else{
+        char* numbers = strstr(buffer, "verylongseparator") + 18;
+        char* currentnumber;
+        char* currentname;
+        printf("The current head to head score between %s and %s is %s to %s.\n", currentname = strsep(&buffer, "\n"), currentname = strsep(&buffer, "\n"), currentnumber = strsep(&numbers, "\n"), currentnumber = strsep(&numbers, "\n"));
+    }
+}
 int start(int KEY){
     int shmd = shmget(KEY, sizeof(int), IPC_CREAT | 0640);
     int *start;
@@ -71,22 +84,32 @@ int start(int KEY){
     int flags = fcntl(0, F_GETFL, 0);
     fcntl(0, F_SETFL, flags | O_NONBLOCK);
 
+    int leaderboard = open("./leaderboard.txt", O_RDWR | O_CREAT, 0666);
+
     while (1){
         signal(SIGINT, sighandler);
         buffer = typed();
         if (strcmp(buffer, "start") == 0){
             *start = 2;
+            printf("Game has been started.\n");
+            fflush(stdout);
         }
+        if (strcmp(buffer, "score") == 0){
+            checkScore();
+            fflush(stdout);
+        }
+        int finished1 = 1;
+        int finished2 = 1;
         while (*time1 == -1 || *time2 == -1){
-            if (*time1 != -1 && *time1 != 0){
+            if (*time1 != -1 && finished1){
                 printf("0 made it\n");
                 printf("%s has finished in %d seconds\n", name, *time1);
-                *time1 = 0;
+                finished1 = 0;
             }
-            if (*time2 != -1 && *time2 != 0){
+            if (*time2 != -1 && finished2){
                 printf("1 made it\n");
                 printf("%s has finished in %d seconds\n", &name[15], *time2);
-                *time2 = 0;
+                finished2 = 0;
             }
         }
         *time1 = -1;
