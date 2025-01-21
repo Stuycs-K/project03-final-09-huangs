@@ -33,3 +33,6 @@ Anything you type during the countdown will be ignored for the first word (2 hou
 
 ### 2025-01-19 - Working score and setusername and added various print statements and started on sigint for players
 Host and players can check the score. Score is automatically updated after each game. Players can set their usernames and it will be reflected in the score and in the game string. Host knows when a player sigints. The mechanics of the game are practically done. (7 hours)
+
+### 2025-01-20 - Working everything else
+Added player and host sighandlers to make sure shared memory segments and semaphores are removed properly. If host sigints, both players are now removed. Players now have to wait for the current game to be over to start playing. Fixed minor issue when game is started while a player is setting their username. Fixed issue where the winner is incorrectly decided if a player quits. Also uploaded demo and updated README.md. (5 hours)
