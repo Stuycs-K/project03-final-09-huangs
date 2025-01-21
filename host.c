@@ -174,6 +174,7 @@ int start(int KEY){
     fcntl(0, F_SETFL, flags | O_NONBLOCK);
 
     int score = open("./score.txt", O_RDWR | O_CREAT, 0666);
+    system("clear");
     printf("You have started a game of Budget Typeracer.\n");
     printf("Type \"start\" to start the game.\n");
     printf("Type \"score\" to check the score.\n");

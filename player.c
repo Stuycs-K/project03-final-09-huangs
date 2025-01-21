@@ -13,9 +13,8 @@ static void sighandler(int signo){
   if (signo == SIGINT){
     if (*data == -1000){
       printf("The host has quit the game.\n");
-      if (sem == 1){
-        shmctl(shmd, IPC_RMID, 0);
-      }
+      shmctl(shmd, IPC_RMID, 0);
+      semctl(semd, IPC_RMID, 0);
       exit(0);
     }
     else{
