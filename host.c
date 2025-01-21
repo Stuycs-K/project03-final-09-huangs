@@ -14,20 +14,23 @@ static int k1 = 1236432234;
 
 static void sighandler(int signo){
     if (signo == SIGINT){
-        int shmd = shmget(KEY, sizeof(int), IPC_CREAT | 0640);
-        shmctl(shmd, IPC_RMID, 0);
+        int starter = shmget(KEY, sizeof(int), IPC_CREAT | 0640);
+        int *start;
+        start = shmat(starter, 0, 0);
+        *start = -1000;
         int p1 = shmget(k0, sizeof(int), IPC_CREAT | 0640);
         shmctl(p1, IPC_RMID, 0);
         int p2 = shmget(k1, sizeof(int), IPC_CREAT | 0640);
         shmctl(p2, IPC_RMID, 0);
         int playerWords = shmget(657396715, sizeof(int) * 2, IPC_CREAT | 0640);
         shmctl(playerWords, IPC_RMID, 0);
-        int start = semget(1867821435, 1, IPC_CREAT | 0660);
-        semctl(start, IPC_RMID, 0);
         int playerNames = shmget(256773432, sizeof(char*) * 2, IPC_CREAT | 0640);
         shmctl(playerNames, IPC_RMID, 0);
         remove("./score.txt");
-        printf("siginted\n");
+        printf("\nYou have quit. Removing all players.\n");
+        int semd = semget(KEY, sizeof(int), IPC_CREAT | 0640);
+        semctl(semd, IPC_RMID, 0);
+        usleep(1000);
         exit(0);
     }
 }
@@ -56,12 +59,14 @@ void updateScore(char* p1, char* p2, int t1, int t2){
     if (strlen(buffer) == 0){
         int first = 0;
         int second = 0;
-        if (t1 < t2){
+        if (t1 < t2 && t1 > 0){
             first++;
         }
-        if (t1 > t2){
+        else if (t1 != t2){
             second++;
         }
+        printf("t1 is %d\nt2 is %d\n", t1, t2);
+        printf("p1 is %s\np2 is %s\nfirst is %d\nsecond is %d\n", p1, p2, first, second);
         sprintf(newbuffer, "%s\n%s\nverylongseparator\n%d\n%d", p1, p2, first, second);
         write(score, newbuffer, 50);
     }
@@ -74,10 +79,10 @@ void updateScore(char* p1, char* p2, int t1, int t2){
             char* firstscore = strsep(&numbers, "\n");
             int first = atoi(firstscore);
             int second = atoi(strsep(&numbers, "\n"));
-            if (t1 < t2){
+            if (t1 < t2 && t1 > 0){
                 first++;
             }
-            if (t1 > t2){
+            else if (t1 != t2){
                 second++;
             }
             sprintf(newbuffer, "%s\n%s\nverylongseparator\n%d\n%d", p1, p2, first, second);
@@ -86,10 +91,10 @@ void updateScore(char* p1, char* p2, int t1, int t2){
         else{
             int first = 0;
             int second = 0;
-            if (t1 < t2){
+            if (t1 < t2 && t1 > 0){
                 first++;
             }
-            if (t1 > t2){
+            else if (t1 != t2){
                 second++;
             }
             sprintf(newbuffer, "%s\n%s\nverylongseparator\n%d\n%d", p1, p2, first, second);
@@ -178,7 +183,6 @@ int start(int KEY){
     while (1){
         signal(SIGINT, sighandler);
         buffer = hostTyped();
-        printf("o");
         fflush(stdout);
         if (strcmp(buffer, "start") == 0){
             if (semctl(semd, 0, GETVAL) != 0){
@@ -212,7 +216,7 @@ int start(int KEY){
                     printf("%s has finished in %d seconds\n", &name[15], *time2);
                     finished2 = 0;
                 }
-                //playerQuit();
+                playerQuit(time1, time2, name);
             }
             updateScore(name, &name[15], *time1, *time2);
             *time1 = -1;

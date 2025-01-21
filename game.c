@@ -45,8 +45,8 @@ char * typed(){
   start = shmat(shmd, 0, 0);
 
   char * typed = calloc(15, sizeof(char));
-  while(read(0, typed, 15) == -1 && *start != 2);
-  if (*start == 2){
+  while(read(0, typed, 15) == -1 && *start != 2 && *start != -1000);
+  if (*start == 2 || *start == -1000){
     free(typed);
     return "\0";
   }
@@ -110,6 +110,9 @@ int game(int numPlayer){
     input = typed();
     word[numPlayer]++;
     while (strcmp(input, wordList[i]) != 0){
+      if (strlen(input) == 0){
+        return 0;
+      }
       printf("You typed %s wrong. Try again\n", wordList[i]);
       input = typed();
     }

@@ -4,20 +4,35 @@ int pkey;
 static void sighandler(int signo){
   int player;
   int* time;
-    if (signo == SIGINT){
-        if (pkey == 1236432234){
-          player = shmget(pkey, sizeof(int), IPC_CREAT | 0640);
-          time = shmat(player, 0, 0);
-          *time = -1000;
-        }
-        else{
-          player = shmget(1975087341, sizeof(int), IPC_CREAT | 0640);
-          time = shmat(player, 0, 0);
-          *time = -1000;
-        }
-        printf("siginted\n");
-        exit(0);
+  int *data;
+  int shmd = shmget(1867821435, sizeof(int), IPC_CREAT | 0640);
+  data = shmat(shmd, 0, 0);
+  int sem;
+  int semd = semget(1867821435, 1, 0644);
+  sem = semctl(semd, 0, GETVAL);
+  if (signo == SIGINT){
+    if (*data == -1000){
+      printf("The host has quit the game.\n");
+      if (sem == 1){
+        shmctl(shmd, IPC_RMID, 0);
+      }
+      exit(0);
     }
+    else{
+      if (pkey == 1236432234){
+        player = shmget(pkey, sizeof(int), IPC_CREAT | 0640);
+        time = shmat(player, 0, 0);
+        *time = -1000;
+      }
+      else{
+        player = shmget(1975087341, sizeof(int), IPC_CREAT | 0640);
+        time = shmat(player, 0, 0);
+        *time = -1000;
+      }
+      printf("\nYou have left the game.\n");
+      exit(0);
+    }
+  }
 }
 void setUsername(int numPlayer, char* name){
   printf("Your current username is %s. Change your username to:\n", &name[numPlayer * 15]);
@@ -120,9 +135,15 @@ int connect(int KEY){
   printf("Type \"setusername\" to change your username.\n");
   printf("Type \"score\" to check the score.\n");
   while (1){
+    if (*data == -1000){
+      kill(getpid(), SIGINT);
+    }
     signal(SIGINT, sighandler);
     while (*data == 0){
       bufferr = typed();
+      if (*data == -1000){
+        kill(getpid(), SIGINT);
+      }
       if (strcmp(bufferr, "setusername") == 0){
         setUsername(numPlayer, name);
       }
@@ -134,7 +155,9 @@ int connect(int KEY){
       }
     }
     *time = game(numPlayer);
-    printf("Waiting for the host to start...\n");
+    if (*time != 0){
+      printf("Waiting for the host to start...\n");
+    }
   }
   return 0;
 }
