@@ -36,27 +36,29 @@ static void sighandler(int signo){
 void setUsername(int numPlayer, char* name){
   printf("Your current username is %s. Change your username to:\n", &name[numPlayer * 15]);
   char* newName = typed();
-  int smaller = strlen(newName);
-  if (15 < smaller){
-    smaller = 15;
+  if (strlen(newName) != 0){
+    int smaller = strlen(newName);
+    if (15 < smaller){
+      smaller = 15;
+    }
+    if (numPlayer == 0){
+      for (int i = 0; i < smaller; i++){
+        name[i] = newName[i];
+      }
+      for (int i = smaller; i < 15; i++){
+        name[i] = '\0';
+      }
+    }
+    else{
+      for (int i = 0; i < smaller; i++){
+        name[i + 15] = newName[i];
+      }
+      for (int i = smaller; i < 30; i++){
+        name[i + 15] = '\0';
+      }
+    }
+    printf("Your username is now %s.\n", &name[numPlayer * 15]);
   }
-  if (numPlayer == 0){
-    for (int i = 0; i < smaller; i++){
-      name[i] = newName[i];
-    }
-    for (int i = smaller; i < 15; i++){
-      name[i] = '\0';
-    }
-  }
-  else{
-    for (int i = 0; i < smaller; i++){
-      name[i + 15] = newName[i];
-    }
-    for (int i = smaller; i < 30; i++){
-      name[i + 15] = '\0';
-    }
-  }
-  printf("Your username is now %s.\n", &name[numPlayer * 15]);
 }
 void checkScore(){
   int score = open("./score.txt", O_RDONLY | O_CREAT, 0666);
@@ -149,7 +151,6 @@ int connect(int KEY){
     }
   }
   while (1){
-    usleep(1000000);
     if (*data == -1000){
       kill(getpid(), SIGINT);
     }
