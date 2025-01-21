@@ -62,7 +62,7 @@ void updateScore(char* p1, char* p2, int t1, int t2){
     if (strlen(buffer) == 0){
         int first = 0;
         int second = 0;
-        if (t1 < t2 && t1 > 0){
+        if (t1 < t2 || (t1 > 0 && t2 < 0)){
             first++;
         }
         else if (t1 != t2){
@@ -80,7 +80,7 @@ void updateScore(char* p1, char* p2, int t1, int t2){
             char* firstscore = strsep(&numbers, "\n");
             int first = atoi(firstscore);
             int second = atoi(strsep(&numbers, "\n"));
-            if (t1 < t2 && t1 > 0){
+            if (t1 < t2 || (t1 > 0 && t2 < 0)){
                 first++;
             }
             else if (t1 != t2){
@@ -92,7 +92,7 @@ void updateScore(char* p1, char* p2, int t1, int t2){
         else{
             int first = 0;
             int second = 0;
-            if (t1 < t2 && t1 > 0){
+            if (t1 < t2 || (t1 > 0 && t2 < 0)){
                 first++;
             }
             else if (t1 != t2){
