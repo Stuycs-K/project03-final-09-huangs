@@ -10,20 +10,15 @@ Stanley Huang
 This is a typing game inspired by Typeracer. There is a host that can start a game and two more players can join and race to type a list of 10 randomly generated words. There is a way to check the score in between games and is based off of the player names.
 
 ### Video:
-https://drive.google.com/file/d/1IRCmzvoU1zdAl8z2nixi9yQWyNXg-_IY/view?usp=sharing
-for stuy.edu email.
-
-OR
 
 https://youtu.be/m9cCNaM7Jhs
 
 ### Instructions:
 
-"make compile" to compile.\n
-Host must start the game first by running "./host".\n
+"make compile" to compile.<br>
+Host must start the game first by running "./host".<br>
 Players can join after by running "./player".
-\n
-Ways to interact with the program will be shown on screen at the beginning but essentially:\n
-Host can start the game with "start", check the score with "score", and reset the score with "reset".\n
-Player can set their username with "setusername" and then typing their new username, and check the score with "score".\n
-
+<br>
+Ways to interact with the program will be shown on screen at the beginning but essentially:<br>
+Host can start the game with "start", check the score with "score", and reset the score with "reset".<br>
+Player can set their username with "setusername" and then typing their new username, and check the score with "score".<br>
