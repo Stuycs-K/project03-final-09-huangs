@@ -19,12 +19,11 @@ https://youtu.be/m9cCNaM7Jhs
 
 ### Instructions:
 
-"make compile" to compile.
-Host must start the game first by running "./host".
+"make compile" to compile.\n
+Host must start the game first by running "./host".\n
 Players can join after by running "./player".
+\n
+Ways to interact with the program will be shown on screen at the beginning but essentially:\n
+Host can start the game with "start", check the score with "score", and reset the score with "reset".\n
+Player can set their username with "setusername" and then typing their new username, and check the score with "score".\n
 
-Ways to interact with the program will be shown on screen at the beginning but essentially:
-Host can start the game with "start", check the score with "score", and reset the score with "reset".
-Player can set their username with "setusername" and then typing their new username, and check the score with "score".
-How does the user install/compile/run the program.
-How does the user interact with this program?
