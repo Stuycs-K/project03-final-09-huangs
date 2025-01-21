@@ -28,9 +28,12 @@ static void sighandler(int signo){
         shmctl(playerNames, IPC_RMID, 0);
         remove("./score.txt");
         printf("\nYou have quit. Removing all players.\n");
-        int semd = semget(KEY, sizeof(int), IPC_CREAT | 0640);
-        semctl(semd, IPC_RMID, 0);
+        int semd = semget(KEY, 1, IPC_CREAT | 0640);
         usleep(1000);
+        shmctl(starter, IPC_RMID, 0);
+        if (semctl(semd, IPC_RMID, 0) == -1) {
+            perror("semctl failed");
+        }
         exit(0);
     }
 }
