@@ -81,6 +81,11 @@ int connect(int KEY){
   buffer.sem_op = -1;
   int semd = semget(KEY, 1, 0644);
   int spotsleft = semctl(semd, 0, GETVAL);
+  if (spotsleft == -1){
+    printf("Host must start the game first\n");
+    semctl(semd, IPC_RMID, 0);
+    exit(0);
+  }
   //Shared memory segments stuff
   int *data;
   int shmd = shmget(KEY, sizeof(int), IPC_CREAT | 0640);
