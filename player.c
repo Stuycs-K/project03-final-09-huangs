@@ -134,7 +134,18 @@ int connect(int KEY){
 
   printf("Type \"setusername\" to change your username.\n");
   printf("Type \"score\" to check the score.\n");
+  int ingame = 1;
+  while (*data == 1){
+    if (*data == -1000){
+      kill(getpid(), SIGINT);
+    }
+    if (ingame){
+      printf("Waiting for the game to be over...\n");
+      ingame = 0;
+    }
+  }
   while (1){
+    usleep(1000000);
     if (*data == -1000){
       kill(getpid(), SIGINT);
     }

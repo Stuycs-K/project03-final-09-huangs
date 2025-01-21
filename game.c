@@ -1,6 +1,6 @@
 #include "game.h"
 char** randomWords(){
-  int listsize = 1000;
+  int listsize = 10000;
   int file = open("/dev/urandom", O_RDONLY, 0666);
   char ** wordList = malloc(sizeof(char*) * 10);
   int ints[10];

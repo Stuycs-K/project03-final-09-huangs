@@ -65,8 +65,6 @@ void updateScore(char* p1, char* p2, int t1, int t2){
         else if (t1 != t2){
             second++;
         }
-        printf("t1 is %d\nt2 is %d\n", t1, t2);
-        printf("p1 is %s\np2 is %s\nfirst is %d\nsecond is %d\n", p1, p2, first, second);
         sprintf(newbuffer, "%s\n%s\nverylongseparator\n%d\n%d", p1, p2, first, second);
         write(score, newbuffer, 50);
     }
@@ -105,12 +103,12 @@ void updateScore(char* p1, char* p2, int t1, int t2){
 }
 void playerQuit(int* time1, int* time2, char* name){
     if (*time1 == -1000){
-        printf("%s has quit.\n", name);
+        printf("%s has quit.\n", &name[15]);
         fflush(stdout);
         *time1 = -10000;
     }
     if (*time2 == -1000){
-        printf("%s has quit.\n", &name[15]);
+        printf("%s has quit.\n", name);
         fflush(stdout);
         *time2 = -10000;
     }
@@ -221,6 +219,7 @@ int start(int KEY){
             updateScore(name, &name[15], *time1, *time2);
             *time1 = -1;
             *time2 = -1;
+            *start = 0;
         }
     }
 }
