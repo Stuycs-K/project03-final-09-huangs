@@ -8,7 +8,15 @@ Stanley Huang
 ### Project Description:
 
 This is a typing game inspired by Typeracer. There is a host that can start a game and two more players can join and race to type a list of 10 randomly generated words. There is a way to check the score in between games and is based off of the player names.
-  
+
+### Video:
+https://drive.google.com/file/d/1IRCmzvoU1zdAl8z2nixi9yQWyNXg-_IY/view?usp=sharing
+for stuy.edu email.
+
+OR
+
+https://youtu.be/m9cCNaM7Jhs
+
 ### Instructions:
 
 "make compile" to compile.
